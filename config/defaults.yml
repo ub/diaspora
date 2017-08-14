@@ -153,6 +153,12 @@ defaults:
       report_only: true
       report_uri:
   services:
+    facebook:
+      enable: false
+      app_id:
+      secret:
+      open_graph_namespace: 'joindiaspora'
+      authorized: false
     twitter:
       enable: false
       key:
