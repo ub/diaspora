@@ -47,3 +47,4 @@
 //= require helpers/markdown_editor
 //= require helpers/protocol_handler
 //= require jquery.are-you-sure
+//= require cropperjs/dist/cropper.js
