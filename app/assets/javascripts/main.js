@@ -48,3 +48,4 @@
 //= require helpers/protocol_handler
 //= require jquery.are-you-sure
 //= require cropperjs/dist/cropper.js
+//= require pica
