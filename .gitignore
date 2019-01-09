@@ -81,3 +81,5 @@ diaspora.iml
 
 # WebTranslateIt
 .wti
+/solidarnost-dev.md
+!/tmp/pids/.gitkeep
