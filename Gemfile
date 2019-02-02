@@ -269,6 +269,12 @@ group :development do
   gem "simplecov", "0.16.1", require: false
 
   gem "turbo_dev_assets", "0.0.2"
+
+  gem 'capistrano'
+  gem 'capistrano-rails', require: false
+  # gem 'capistrano-db-tasks', require: false
+  gem 'capistrano-rails-collection', require: false
+
 end
 
 group :test do
