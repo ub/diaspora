@@ -84,4 +84,3 @@ diaspora.iml
 /solidarnost-dev.md
 !/tmp/pids/.gitkeep
 /ssh_keys/
-config/secrets.yml
