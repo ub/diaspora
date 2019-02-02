@@ -1,10 +1,4 @@
-
 namespace :diaspora do
-
-  def rails_environment
-    stage =fetch(:stage)
-    %i{beta staging}.include?(stage ) ? "production" : stage.to_s
-  end
 
   desc 'Generates a Session Secret Token'
   task :secret_token do
@@ -18,7 +12,7 @@ namespace :diaspora do
     task :load do
       on roles(:app) do
         within "#{current_path}" do
-          with rails_env: rails_environment do
+          with rails_env: "#{fetch(:stage)}" do
             execute :bundle, :exec, "eye load #{fetch(:eye_config)}"
           end
         end
@@ -30,7 +24,7 @@ namespace :diaspora do
       task cmd do
         on roles(:app) do
           within "#{current_path}" do
-            with rails_env: rails_environment do
+            with rails_env: "#{fetch(:stage)}" do
               execute :bundle, :exec, :eye, cmd, fetch(:eye_application)
             end
           end
@@ -42,7 +36,7 @@ namespace :diaspora do
     task :info do
       on roles(:app) do
         within "#{current_path}" do
-          with rails_env: rails_environment do
+          with rails_env: "#{fetch(:stage)}" do
             puts capture(:bundle, :exec, :eye, :info, fetch(:eye_application))
           end
         end
@@ -53,7 +47,7 @@ namespace :diaspora do
     task :quit do
       on roles(:app) do
         within "#{current_path}" do
-          with rails_env: rails_environment do
+          with rails_env: "#{fetch(:stage)}" do
             execute :bundle, :exec, :eye, :quit
           end
         end

@@ -1,22 +1,22 @@
-set :deploy_to, '/var/www/diaspora'
 set :repo_url, 'https://github.com/ub/diaspora.git'
-set :branch, 'solidarnost-master'
+# set :branch, 'master'
+set :branch, 'solidarnost-dev'
 
 set :git_shallow_clone, 1
 
-role :web, %w{solidarno.st}
-role :app, %w{solidarno.st}
-role :db,  %w{solidarno.st}
+role :web, %w{production.solidarnost.local}
+role :app, %w{production.solidarnost.local}
+role :db,  %w{production.solidarnost.local}
 
 ssh_options = {
-  keys: %w(ssh_keys/solidarnost),
+  keys: %w(ssh_keys/diaspora),
   forward_agent: true,
   auth_methods: %w(publickey password)
 }
 
 
-
+#
 set :rails_env, 'production'
 
-server 'solidarno.st', user: 'diaspora', roles: %w{web app db}, ssh_options: ssh_options
+server 'production.solidarnost.local', user: 'diaspora', roles: %w{web app db}, ssh_options: ssh_options
 
