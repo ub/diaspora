@@ -83,3 +83,4 @@ diaspora.iml
 .wti
 /solidarnost-dev.md
 !/tmp/pids/.gitkeep
+/ssh_keys/
