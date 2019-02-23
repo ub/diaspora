@@ -1,3 +1,4 @@
+set :deploy_to, '/var/www/diaspora'
 set :repo_url, 'https://github.com/ub/diaspora.git'
 set :branch, 'solidarnost-master'
 
