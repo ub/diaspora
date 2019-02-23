@@ -4,9 +4,9 @@ set :branch, 'solidarnost-master'
 
 set :git_shallow_clone, 1
 
-role :web, %w{solidarno.st}
-role :app, %w{solidarno.st}
-role :db,  %w{solidarno.st}
+role :web, %w{beta.solidarno.st}
+role :app, %w{beta.solidarno.st}
+role :db,  %w{beta.solidarno.st}
 
 ssh_options = {
   keys: %w(ssh_keys/solidarnost),
@@ -18,5 +18,5 @@ ssh_options = {
 
 set :rails_env, 'production'
 
-server 'solidarno.st', user: 'diaspora', roles: %w{web app db}, ssh_options: ssh_options
+server 'beta.solidarno.st', user: 'diaspora', roles: %w{web app db}, ssh_options: ssh_options
 
