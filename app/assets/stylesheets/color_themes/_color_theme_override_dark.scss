@@ -96,6 +96,8 @@ body {
   .md-editor,
   .block-form fieldset .form-control:focus { border-color: $input-border; }
 
+  &.page-omniauth_registrations.action-new,
+  &.page-omniauth_registrations.action-create,
   &.page-registrations.action-new,
   &.page-registrations.action-create {
     .ball { filter: invert(100%); }

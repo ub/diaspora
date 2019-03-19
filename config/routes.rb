@@ -119,10 +119,14 @@ Rails.application.routes.draw do
     get "getting_started_completed" => :getting_started_completed
   end
 
-  devise_for :users, controllers: {sessions: :sessions}, skip: :registration
+  devise_for :users, controllers: {sessions: :sessions,
+                                   omniauth_callbacks: "users/omniauth_callbacks"},
+             skip: :registration
   devise_scope :user do
     get "/users/sign_up" => "registrations#new",    :as => :new_user_registration
     post "/users"        => "registrations#create", :as => :user_registration
+    get "/users/sign_up_with_google"  => "omniauth_registrations#new",    :as => :new_user_registration_with_google
+    post "/users/sign_up_with_google" => "omniauth_registrations#create", :as => :user_registration_with_google
   end
 
   get "users/invitations"  => "invitations#new",    :as => "new_user_invitation"
