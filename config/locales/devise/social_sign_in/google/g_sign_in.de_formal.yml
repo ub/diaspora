@@ -1,0 +1,5 @@
+de_formal:
+  devise:
+    sessions:
+      new:
+        sign_in_with_google: Mit Google anmelden        
