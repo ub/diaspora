@@ -1,3 +1,5 @@
+.page-omniauth_registrations.action-new,
+.page-omniauth_registrations.action-create,
 .page-registrations.action-new,
 .page-registrations.action-create {
   .ball {
@@ -49,5 +51,13 @@
   .terms > a {
     color: inherit;
     text-decoration: underline;
+  }
+}
+
+.page-omniauth_registrations.action-new,
+.page-omniauth_registrations.action-create {
+  .captcha-img {
+    top: 91px;
+
   }
 }

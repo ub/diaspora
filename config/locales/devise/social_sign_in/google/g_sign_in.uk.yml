@@ -1,0 +1,5 @@
+uk:
+  devise:
+    sessions:
+      new:
+        sign_in_with_google: Приєднатися через Google        

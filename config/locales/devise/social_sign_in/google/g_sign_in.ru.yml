@@ -1,0 +1,5 @@
+ru:
+  devise:
+    sessions:
+      new:
+        sign_in_with_google: Войти с помощью Google        

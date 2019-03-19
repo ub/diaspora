@@ -42,3 +42,11 @@
 
   = f.hidden_field :remember_me, value: 1
   = f.submit t("devise.sessions.new.sign_in"), class: "btn btn-large btn-block btn-primary"
+  - content_for :head do
+    %link{:href=>"https://fonts.googleapis.com/css?family=Roboto", :rel=>"stylesheet", :type=>"text/css"}
+
+  = link_to(user_google_oauth2_omniauth_authorize_path, class: "btn btn-large btn-block btn-primary" ) do
+    %span.google-button__icon
+      = image_tag("social-media-logos/btn_google_dark_normal_ios.svg", :alt => "G")
+    %span.google-button__text
+      = t 'devise.sessions.new.sign_in_with_google'

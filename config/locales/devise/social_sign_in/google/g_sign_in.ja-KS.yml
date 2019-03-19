@@ -1,0 +1,5 @@
+ja-KS:
+  devise:
+    sessions:
+      new:
+        sign_in_with_google: Sign in with Google        
