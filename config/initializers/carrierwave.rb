@@ -16,12 +16,15 @@ CarrierWave.configure do |config|
         provider:              'AWS',
         aws_access_key_id:     AppConfig.environment.s3.key.get,
         aws_secret_access_key: AppConfig.environment.s3.secret.get,
-        region:                AppConfig.environment.s3.region.get
+        region:                AppConfig.environment.s3.region.get,
+        endpoint: 'https://ams3.digitaloceanspaces.com'
+
     }
     if AppConfig.environment.s3.cache?
       config.fog_attributes['Cache-Control'] = 'max-age=31536000'
     end
 
+    config.asset_host = 'https://solidarnost.ams3.digitaloceanspaces.com'
     config.fog_directory = AppConfig.environment.s3.bucket.get
   else
     config.storage = :file
