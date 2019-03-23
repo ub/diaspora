@@ -9,7 +9,7 @@ role :app, %w{solidarno.st}
 role :db,  %w{solidarno.st}
 
 ssh_options = {
-  keys: %w(ssh_keys/solidarnost),
+  keys: %w(ssh_keys/solidarnost_ed25519),
   forward_agent: true,
   auth_methods: %w(publickey password)
 }
