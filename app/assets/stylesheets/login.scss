@@ -14,3 +14,19 @@
     max-width: 400px;
   }
 }
+
+.google-button__icon img {
+  height: 36px;
+  width: 36px;
+}
+
+.google-button__text {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+}
+

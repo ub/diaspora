@@ -12,16 +12,18 @@ class User < ApplicationRecord
 
   apply_simple_captcha :message => I18n.t('simple_captcha.message.failed'), :add_to_base => true
 
-  scope :logged_in_since, ->(time) { where('last_seen > ?', time) }
-  scope :monthly_actives, ->(time = Time.now) { logged_in_since(time - 1.month) }
-  scope :daily_actives, ->(time = Time.now) { logged_in_since(time - 1.day) }
-  scope :yearly_actives, ->(time = Time.now) { logged_in_since(time - 1.year) }
-  scope :halfyear_actives, ->(time = Time.now) { logged_in_since(time - 6.month) }
-  scope :active, -> { joins(:person).where(people: {closed_account: false}) }
+  scope :logged_in_since, ->(time) {where('last_seen > ?', time)}
+  scope :monthly_actives, ->(time = Time.now) {logged_in_since(time - 1.month)}
+  scope :daily_actives, ->(time = Time.now) {logged_in_since(time - 1.day)}
+  scope :yearly_actives, ->(time = Time.now) {logged_in_since(time - 1.year)}
+  scope :halfyear_actives, ->(time = Time.now) {logged_in_since(time - 6.month)}
+  scope :active, -> {joins(:person).where(people: {closed_account: false})}
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :lockable, :lastseenable, :lock_strategy => :none, :unlock_strategy => :none
+         :omniauthable, :lastseenable,
+         :lockable, :lock_strategy => :none, :unlock_strategy => :none,
+         :omniauth_providers => [:google_oauth2]
 
   before_validation :strip_and_downcase_username
   before_validation :set_current_language, :on => :create
@@ -33,7 +35,7 @@ class User < ApplicationRecord
   validates_exclusion_of :username, :in => AppConfig.settings.username_blacklist
   validates_inclusion_of :language, :in => AVAILABLE_LANGUAGE_CODES
   validates :color_theme, inclusion: {in: AVAILABLE_COLOR_THEMES}, allow_blank: true
-  validates_format_of :unconfirmed_email, :with  => Devise.email_regexp, :allow_blank => true
+  validates_format_of :unconfirmed_email, :with => Devise.email_regexp, :allow_blank => true
 
   validate :unconfirmed_email_quasiuniqueness
 
@@ -51,7 +53,7 @@ class User < ApplicationRecord
            :first_name, :last_name, :full_name, :gender, :participations, to: :person
   delegate :id, :guid, to: :person, prefix: true
 
-  has_many :aspects, -> { order('order_id ASC') }
+  has_many :aspects, -> {order('order_id ASC')}
 
   belongs_to :auto_follow_back_aspect, class_name: "Aspect", optional: true
   belongs_to :invited_by, class_name: "User", optional: true
@@ -68,7 +70,7 @@ class User < ApplicationRecord
   has_many :user_preferences
 
   has_many :tag_followings
-  has_many :followed_tags, -> { order('tags.name') }, :through => :tag_followings, :source => :tag
+  has_many :followed_tags, -> {order('tags.name')}, :through => :tag_followings, :source => :tag
 
   has_many :blocks
   has_many :ignored_people, :through => :blocks, :source => :person
@@ -92,6 +94,17 @@ class User < ApplicationRecord
 
   before_destroy do
     raise "Never destroy users!"
+  end
+
+  def self.from_omniauth(auth)
+
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.token = auth.credentials.token
+      user.expires = auth.credentials.expires
+      user.expires_at = auth.credentials.expires_at
+      user.refresh_token = auth.credentials.refresh_token
+      user.email = auth.info.email
+    end
   end
 
   def self.all_sharing_with_person(person)
@@ -119,7 +132,7 @@ class User < ApplicationRecord
     self[:hidden_shareables] ||= {}
   end
 
-  def add_hidden_shareable(key, share_id, opts={})
+  def add_hidden_shareable(key, share_id, opts = {})
     if self.hidden_shareables.has_key?(key)
       self.hidden_shareables[key] << share_id
     else
@@ -173,7 +186,7 @@ class User < ApplicationRecord
 
   def update_user_preferences(pref_hash)
     if self.disable_mail
-      UserPreference::VALID_EMAIL_TYPES.each{|x| self.user_preferences.find_or_create_by(email_type: x)}
+      UserPreference::VALID_EMAIL_TYPES.each {|x| self.user_preferences.find_or_create_by(email_type: x)}
       self.disable_mail = false
       self.save
     end
@@ -212,7 +225,7 @@ class User < ApplicationRecord
   # This override allows a user to enter either their email address or their username into the username field.
   # @return [User] The user that matches the username/email condition.
   # @return [nil] if no user matches that condition.
-  def self.find_for_database_authentication(conditions={})
+  def self.find_for_database_authentication(conditions = {})
     conditions = conditions.dup
     conditions[:username] = conditions[:username].downcase
     if conditions[:username] =~ /^([\w\.%\+\-]+)@([\w\-]+\.)+([\w]{2,})$/i # email regex
@@ -228,19 +241,19 @@ class User < ApplicationRecord
   end
 
   ######## Posting ########
-  def build_post(class_name, opts={})
+  def build_post(class_name, opts = {})
     opts[:author] = person
 
     model_class = class_name.to_s.camelize.constantize
     model_class.diaspora_initialize(opts)
   end
 
-  def dispatch_post(post, opts={})
+  def dispatch_post(post, opts = {})
     logger.info "user:#{id} dispatching #{post.class}:#{post.guid}"
     Diaspora::Federation::Dispatcher.defer_dispatch(self, post, opts)
   end
 
-  def update_post(post, post_hash={})
+  def update_post(post, post_hash = {})
     if self.owns? post
       post.update_attributes(post_hash)
       self.dispatch_post(post)
@@ -295,7 +308,7 @@ class User < ApplicationRecord
   # @return [Like]
   def like_for(target)
     if target.likes.loaded?
-      target.likes.find {|like| like.author_id == person.id }
+      target.likes.find {|like| like.author_id == person.id}
     else
       Like.find_by(author_id: person.id, target_type: target.class.base_class.to_s, target_id: target.id)
     end
@@ -347,7 +360,7 @@ class User < ApplicationRecord
   def mail(job, *args)
     return unless job.present?
     pref = job.to_s.gsub('Workers::Mail::', '').underscore
-    if(self.disable_mail == false && !self.user_preferences.exists?(:email_type => pref))
+    if (self.disable_mail == false && !self.user_preferences.exists?(:email_type => pref))
       job.perform_async(*args)
     end
   end
@@ -374,7 +387,7 @@ class User < ApplicationRecord
     end
 
     params.stringify_keys!
-    params.slice!(*(Profile.column_names+['tag_string', 'date']))
+    params.slice!(*(Profile.column_names + ['tag_string', 'date']))
     if self.profile.update_attributes(params)
       deliver_profile_update
       true
@@ -383,11 +396,11 @@ class User < ApplicationRecord
     end
   end
 
-  def update_profile_with_omniauth( user_info )
-    update_profile( self.profile.from_omniauth_hash( user_info ) )
+  def update_profile_with_omniauth(user_info)
+    update_profile(self.profile.from_omniauth_hash(user_info))
   end
 
-  def deliver_profile_update(opts={})
+  def deliver_profile_update(opts = {})
     Diaspora::Federation::Dispatcher.defer_dispatch(self, profile, opts)
   end
 
@@ -447,8 +460,8 @@ class User < ApplicationRecord
     return if sender.nil?
     conversation = sender.build_conversation(
       participant_ids: [sender.person.id, person.id],
-      subject:         AppConfig.settings.welcome_message.subject.get,
-      message:         {text: AppConfig.settings.welcome_message.text.get % {username: username}}
+      subject: AppConfig.settings.welcome_message.subject.get,
+      message: {text: AppConfig.settings.welcome_message.text.get % {username: username}}
     )
 
     Diaspora::Federation::Dispatcher.build(sender, conversation).dispatch if conversation.save
@@ -583,6 +596,10 @@ class User < ApplicationRecord
     end
   end
 
+  def oauth_registered?
+    self.uid? && self.provider?
+  end
+
   private
 
   def clearable_fields
@@ -591,5 +608,10 @@ class User < ApplicationRecord
                          disable_mail show_community_spotlight_in_stream
                          strip_exif email remove_after export exporting
                          exported_photos_file exporting_photos)
+  end
+
+  def password_required?
+    return false if oauth_registered?
+    super
   end
 end
