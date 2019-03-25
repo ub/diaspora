@@ -85,3 +85,4 @@ diaspora.iml
 !/tmp/pids/.gitkeep
 /ssh_keys/
 config/secrets.yml
+!/app/assets/images/branding/logos-s72255883d0.png
