@@ -86,3 +86,4 @@ diaspora.iml
 /ssh_keys/
 config/secrets.yml
 !/app/assets/images/branding/logos-s72255883d0.png
+!/app/assets/images/social-media-logos-sb92453a67b.png
