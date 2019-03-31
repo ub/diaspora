@@ -1,6 +1,5 @@
 set :deploy_to, '/var/www/diaspora'
 set :repo_url, 'https://github.com/ub/diaspora.git'
-# set :branch, 'master'
 set :branch, 'solidarnost-master'
 
 set :git_shallow_clone, 1
@@ -14,6 +13,7 @@ ssh_options = {
   forward_agent: true,
   auth_methods: %w(publickey password)
 }
+
 
 
 set :rails_env, 'production'
